@@ -18,7 +18,7 @@ spec:
         image: percona:5.7
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: "V%!^MTK_2rS6%^)7"
+          value: "xxxxxx"
         ports:
         - containerPort: 3306
         volumeMounts:
