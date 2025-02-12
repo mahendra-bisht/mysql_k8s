@@ -5,7 +5,7 @@ metadata:
   namespace: database
 spec:
   capacity:
-    storage: 1.7Ti
+    storage: 1Ti
   accessModes:
     - ReadWriteOnce
   hostPath:
