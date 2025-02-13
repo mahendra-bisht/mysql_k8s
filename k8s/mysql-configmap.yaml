@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-config
+  namespace: database
+data:
+  primary.cnf: |
+    [mysqld]
+    server-id=1
+    log-bin=mysql-bin
+    binlog-format=ROW
+    max_connections=200
+    bind-address=0.0.0.0
+
+  replica.cnf: |
+    [mysqld]
+    server-id=${MYSQL_SERVER_ID}
+    read_only=1
+    relay-log=mysql-relay-bin
+    log-bin=mysql-bin
+    binlog-format=ROW
+    bind-address=0.0.0.0
