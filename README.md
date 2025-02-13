@@ -373,11 +373,9 @@ initContainers:
     - sh
     - "-c"
     - |
-      # Extract pod index from hostname
       POD_INDEX=$(hostname | awk -F'-' '{print $NF}')
       SERVER_ID=$((POD_INDEX + 1))
 
-      # Generate my.cnf dynamically based on server ID
       if [ "$POD_INDEX" -eq 0 ]; then
           cp /config/primary.cnf /etc/mysql/my.cnf
       else
