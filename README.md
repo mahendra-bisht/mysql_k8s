@@ -367,26 +367,6 @@ Purpose:
 Dynamically configure my.cnf files for master and replicas.
 
 initContainers:
-- name: init-mysql
-  image: busybox
-  command:
-    - sh
-    - "-c"
-    - |
-      POD_INDEX=$(hostname | awk -F'-' '{print $NF}')
-      SERVER_ID=$((POD_INDEX + 1))
-
-      if [ "$POD_INDEX" -eq 0 ]; then
-          cp /config/primary.cnf /etc/mysql/my.cnf
-      else
-          echo "[mysqld]" > /etc/mysql/my.cnf
-          echo "server-id=$SERVER_ID" >> /etc/mysql/my.cnf
-          echo "read_only=1" >> /etc/mysql/my.cnf
-          echo "relay-log=mysql-relay-bin" >> /etc/mysql/my.cnf
-          echo "log-bin=mysql-bin" >> /etc/mysql/my.cnf
-          echo "binlog-format=ROW" >> /etc/mysql/my.cnf
-          echo "bind-address=0.0.0.0" >> /etc/mysql/my.cnf
-      fi
 
 ⚙️ Breaking Down the Init Container
 
