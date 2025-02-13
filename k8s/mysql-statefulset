@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: database
+spec:
+  serviceName: mysql
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      initContainers:
+      - name: init-mysql
+        image: busybox
+        command:
+          - sh
+          - "-c"
+          - |
+            # Extract pod index from hostname
+            POD_INDEX=$(hostname | awk -F'-' '{print $NF}')
+            SERVER_ID=$((POD_INDEX + 1))
+
+            # Generate my.cnf dynamically based on server ID
+            if [ "$POD_INDEX" -eq 0 ]; then
+                cp /config/primary.cnf /etc/mysql/my.cnf
+            else
+                echo "[mysqld]" > /etc/mysql/my.cnf
+                echo "server-id=$SERVER_ID" >> /etc/mysql/my.cnf
+                echo "read_only=1" >> /etc/mysql/my.cnf
+                echo "relay-log=mysql-relay-bin" >> /etc/mysql/my.cnf
+                echo "log-bin=mysql-bin" >> /etc/mysql/my.cnf
+                echo "binlog-format=ROW" >> /etc/mysql/my.cnf
+                echo "bind-address=0.0.0.0" >> /etc/mysql/my.cnf
+            fi
+        volumeMounts:
+          - name: config-volume
+            mountPath: /config
+          - name: mysql-config
+            mountPath: /etc/mysql
+      containers:
+      - name: mysql
+        image: percona:5.7
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: "V%!^MTK_2rS6%^)7"
+        volumeMounts:
+          - name: mysql-config
+            mountPath: /etc/mysql/my.cnf
+            subPath: my.cnf
+      volumes:
+        - name: config-volume
+          configMap:
+            name: mysql-config
+        - name: mysql-config
+          emptyDir: {}
