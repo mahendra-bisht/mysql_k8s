@@ -47,7 +47,7 @@ spec:
         image: percona:5.7
         env:
           - name: MYSQL_ROOT_PASSWORD
-            value: "V%!^MTK_2rS6%^)7"
+            value: "xxxxx" # Set the Password here for mysql root user
         volumeMounts:
           - name: mysql-config
             mountPath: /etc/mysql/my.cnf
